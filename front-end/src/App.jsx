@@ -5,11 +5,26 @@ import {
 
 import './App.css'
 import HomePage from './pages/Homepage'
+import AboutPage from './pages/AboutPage'
+import ArticlePage from './pages/ArticlePage'
+import ArticlesListPage from './pages/ArticlesListPage'
 
 const routes =[{
   path: '/',
   element: <HomePage />
-}]
+}, {
+  path: '/about',
+  element : <AboutPage />
+}, {
+  path: '/articles',
+  element: <ArticlesListPage />
+}, {
+  path: '/articles/individual',
+  element: <ArticlePage />
+}
+
+
+]
 
 const router = createBrowserRouter(routes)
 

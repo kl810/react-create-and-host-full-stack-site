@@ -31,7 +31,7 @@ const routes = [{
     loader: async function() {
       const response = await axios.get('/api/articles/learn-node');
       const { upvotes, comments } = response.data;
-      return { upvotes, comments }
+      return { upvotes, comments }    //referenced with useLoaderData hook in ArticlePage.jsx
     }
   }]
 }]

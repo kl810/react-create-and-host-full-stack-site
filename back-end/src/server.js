@@ -1,11 +1,11 @@
 import express from 'express';
 import { MongoClient, ReturnDocument, ServerApiVersion } from 'mongodb';
 
-const articleInfo = [
-    { name: 'learn-node', upvotes: 0, comments: []},
-    { name: 'learn-react', upvotes: 0, comments: []},
-    { name: 'learn-mongodb', upvotes: 0, comments: []},
-]
+// const articleInfo = [
+//     { name: 'learn-node', upvotes: 0, comments: []},
+//     { name: 'learn-react', upvotes: 0, comments: []},
+//     { name: 'learn-mongodb', upvotes: 0, comments: []},
+// ]
 
 const app = express();
 
@@ -53,7 +53,7 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
     const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, {
         $inc: { upvotes: 1 } //MongoDB syntax - inc = increment
     }, {
-        ReturnDocument: "after",
+        ReturnDocument: 'after',
     })
 
     // res.send('Success! The article ' + req.params.name + ' now has ' + article.upvotes + ' upvotes!')
@@ -61,19 +61,19 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
     res.json(updatedArticle);
 })
 
-app.post('/api/articles/:name/comments', (req, res) => {
+app.post('/api/articles/:name/comments', async (req, res) => {
     const { name } = req.params;
     const { postedBy, text } = req.body;
+    const newComment = { postedBy, text }
 
-    const article = articleInfo.find(a => a.name === name);
+    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, {
+        $push: { comments: newComment }
+    }, {
+        ReturnDocument: 'after',
+    })
 
-    article.comments.push({
-        postedBy,
-        text,
-    });
-
-    res.json(article);
-})
+    res.json(updatedArticle)
+});
 
 async function start() {        //call connectToDB before starting up server
     await connectToDB();

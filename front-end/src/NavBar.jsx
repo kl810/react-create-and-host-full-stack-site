@@ -5,7 +5,9 @@ export default function NavBar() {
         <nav>
             <ul>
                 <li>
-                    <Link to='/'>Home</Link>
+                    <Link to='/'>Home</Link> {/* User <Link> instead of <a> anchor tag 
+                    because React is SPA <a> sends request to server and 
+                    will reload the entire page */}
                 </li>
                 <li>
                     <Link to='/about'>About</Link>

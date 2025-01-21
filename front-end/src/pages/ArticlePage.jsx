@@ -3,15 +3,26 @@ import { useState } from "react";
 import axios from 'axios';
 import articles from "../article-content";
 import CommentsList from "../commentsList";
+import AddCommentForm from "../AddCommentForm";
 
 export default function ArticlePage() {
 
     const { name } = useParams(); {/* same as const params = useParams()
                                         const name = params.name */}
-    const { upvotes: initialUpvotes, comments } = useLoaderData();
-    const [ upvotes, setUpvotes ] = useState(initialUpvotes)
+    const { upvotes: initialUpvotes, comments: initialComments } = useLoaderData();
+    const [ upvotes, setUpvotes ] = useState(initialUpvotes);
+    const [ comments, setComments ] = useState(initialComments)
 
     const article = articles.find(a => a.name === name);
+
+    async function onAddComment({ nameText, commentText }) {
+        const response = await axios.post('/api/articles/' + name + '/comments', {
+            postedBy: nameText,
+            text: commentText,
+        });
+        const updatedArticleData = response.data;
+        setComments(updatedArticleData.comments)
+    }
 
     async function onUpvoteClicked() {
         const response = await axios.post('/api/articles/' + name + '/upvote');
@@ -25,6 +36,7 @@ export default function ArticlePage() {
             <button onClick={onUpvoteClicked}>Upvote</button>
             <p>This article has {upvotes} upvotes!</p>
             {article.content.map(p => <p key={p}>{p}</p>)}
+            <AddCommentForm onAddComment={onAddComment} />
             <CommentsList comments={comments} />
         </>
         

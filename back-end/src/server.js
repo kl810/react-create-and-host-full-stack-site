@@ -40,7 +40,9 @@ app.use(express.json()) //to use json body for 'req.body'
 let db;
 
 async function connectToDB() {
-    const uri = 'mongodb://localhost:27017/';
+    const uri = !process.env.MONGODB_USERNAME 
+        ? 'mongodb://localhost:27017/'
+        : `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.n770s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
     const client = new MongoClient(uri, {
         serverApi: {

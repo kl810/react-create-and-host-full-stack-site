@@ -66,22 +66,36 @@ app.use(async function(req, res, next) {
     } else {
         res.sendStatus(400);
     }
-    
+
     next();
 })
 
 
 app.post('/api/articles/:name/upvote', async (req, res) => {
     const { name } = req.params;
-    const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, {
-        $inc: { upvotes: 1 } //MongoDB syntax - inc = increment
-    }, {
-        ReturnDocument: 'after',
-    })
+    const { uid } = req.user;
+
+    const article = await db.collection('articles').findOne({ name });
+
+    const upvoteIds = article.upvotesId || [];
+    const canUpvote = uid && !upvotesIds.include(uid);
+
+    if (canUpvote) {
+        const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, {
+            $inc: { upvotes: 1 }, //MongoDB syntax - inc = increment
+            $push: { upvoteIds: uid },
+        }, {
+            ReturnDocument: 'after',
+        });
+
+        res.json(updatedArticle);
+    } else {
+        res.sendStatus(403);
+    }
 
     // res.send('Success! The article ' + req.params.name + ' now has ' + article.upvotes + ' upvotes!')
 
-    res.json(updatedArticle);
+    
 })
 
 app.post('/api/articles/:name/comments', async (req, res) => {

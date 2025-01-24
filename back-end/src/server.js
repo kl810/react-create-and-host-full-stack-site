@@ -63,11 +63,10 @@ app.use(async function(req, res, next) {
     if (authtoken) {
         const user = await admin.auth().verifyIdToken(authtoken);
         req.user = user;
+        next();
     } else {
         res.sendStatus(400);
     }
-
-    next();
 })
 
 
@@ -77,8 +76,8 @@ app.post('/api/articles/:name/upvote', async (req, res) => {
 
     const article = await db.collection('articles').findOne({ name });
 
-    const upvoteIds = article.upvotesId || [];
-    const canUpvote = uid && !upvotesIds.include(uid);
+    const upvoteIds = article.upvoteIds || [];
+    const canUpvote = uid && !upvoteIds.includes(uid);
 
     if (canUpvote) {
         const updatedArticle = await db.collection('articles').findOneAndUpdate({ name }, {

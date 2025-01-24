@@ -1,4 +1,4 @@
 includes:
   - prod-env.yaml
 
-runtime: nodejs20;
+runtime: nodejs20
